@@ -63,15 +63,13 @@ class ContractService:
             {"$set": update_data}
         )
     
-    async def update_contract_data(self, contract_id: str, extracted_data, scoring, gap_analysis, raw_text: str):
+    async def update_contract_data(self, contract_id: str, parsed_result, raw_text: str):
         """save the extracted contract data after ai processing"""
         db = get_database()
         collection = db[self.collection_name]
         
         update_data = {
-            "extracted_data": extracted_data.model_dump() if extracted_data else None,
-            "scoring": scoring.model_dump() if scoring else None,
-            "gap_analysis": gap_analysis.model_dump() if gap_analysis else None,
+            "parsed_result": parsed_result.model_dump() if parsed_result else None,
             "raw_text": raw_text,
             "updated_at": datetime.utcnow()
         }
@@ -148,9 +146,9 @@ class ContractService:
             
             # second step: analyze with ai
             logger.info(f"Starting AI analysis for contract {contract_id}")
-            extracted_data, scoring, gap_analysis = await ai_service.parse_contract_text(raw_text)
+            parsed_result = await ai_service.parse_contract_text(raw_text, contract_id, file_path)
             
-            if not extracted_data:
+            if not parsed_result:
                 await self.update_contract_status(
                     contract_id, 
                     ProcessingStatus.FAILED, 
@@ -163,7 +161,7 @@ class ContractService:
             await self.update_contract_status(contract_id, ProcessingStatus.PROCESSING, 90.0)
             
             # save all the extracted data
-            await self.update_contract_data(contract_id, extracted_data, scoring, gap_analysis, raw_text)
+            await self.update_contract_data(contract_id, parsed_result, raw_text)
             
             # all done!
             await self.update_contract_status(contract_id, ProcessingStatus.COMPLETED, 100.0)

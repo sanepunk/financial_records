@@ -57,7 +57,7 @@ class OCRService:
                 self.base_url,
                 data=payload,
                 files=files,
-                timeout=60  # ocr can be slow
+                timeout=240  # ocr can be slow
             )
             
             response.raise_for_status()

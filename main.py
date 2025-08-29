@@ -5,6 +5,7 @@ import logging
 from app.core.config import settings
 from app.core.database import connect_to_mongo, close_mongo_connection
 from app.api import api_router
+import time 
 
 # setup logging with proper format
 logging.basicConfig(
@@ -60,10 +61,15 @@ async def root():
 @app.get("/health")
 async def health_check():
     """more detailed health check"""
+    time_now = time.time()
+    # convert time to string in Date: <day>:<month>:<year> Time: <hour>:<minute>:<second>
+    time_string = time.strftime("Date: %d:%m:%Y Time: %H:%M:%S", time.localtime(time_now))
     return {
         "status": "healthy",
         "database": "connected",
-        "api_version": "1.0.0"
+        "api_version": "1.0.0",
+        "time": time_string,
+        "env": "Online" if settings else "Offline"
     }
 
 
