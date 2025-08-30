@@ -55,8 +55,6 @@ uploads/
 .coverage
 htmlcov/
 
-# Docker
-.dockerignore
 
 # Environment variables
 .env.local
