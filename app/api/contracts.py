@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
 
-# make sure upload folder exists
 os.makedirs(settings.upload_dir, exist_ok=True)
 
 
@@ -43,7 +42,6 @@ async def upload_contract(file: UploadFile = File(...), background_tasks: Backgr
         content = await file.read()
         await file.seek(0)  # reset file pointer
         
-        # make sure its a pdf
         # mime_type = magic.from_buffer(content, mime=True)
         # if mime_type != 'application/pdf':
         #     raise HTTPException(

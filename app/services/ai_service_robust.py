@@ -18,11 +18,7 @@ from app.models.contract import SimpleParsedResult, ParsedExtractedFields
 
 class AIService:
     def __init__(self):
-        # setup google ai - this is now required
-        if not GOOGLE_AI_AVAILABLE:
-            raise RuntimeError("Google Generative AI is required but not available. Please install: pip install google-generativeai")
-        
-        if not hasattr(settings, 'google_ai_api_key') or not settings.google_ai_api_key:
+        if not settings.google_ai_api_key:
             raise RuntimeError("Google AI API key is required but not configured")
         
         try:
